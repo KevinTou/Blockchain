@@ -65,6 +65,22 @@ class Blockchain(object):
         # TODO: Return the hashed block string in hexadecimal format
         return hex_hash
 
+    @staticmethod
+    def valid_proof(block_string, proof):
+        """
+        Validates the Proof:  Does hash(block_string, proof) contain 6
+        leading zeroes?  Return true if the proof is valid
+        :param block_string: <string> The stringified block to use to
+        check in combination with `proof`
+        :param proof: <int?> The value that when combined with the
+        stringified previous block results in a hash that has the
+        correct number of leading zeroes.
+        :return: True if the resulting hash is a valid proof, False otherwise
+        """
+        guess = f"{block_string}{proof}".encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:6] == "000000"
+
     @property
     def last_block(self):
         return self.chain[-1]
@@ -91,10 +107,19 @@ def mine():
 
         return jsonify(response), 400
 
+    block_string = json.dumps(blockchain.last_block, sort_keys=True)
+
+    if blockchain.valid_proof(block_string, data['proof']) is False:
+        response = {
+            'message': 'Not a valid proof.'
+        }
+
+        return jsonify(response), 400
+
     for current in blockchain.chain:
         if data['proof'] == current['proof']:
             response = {
-                'message': 'Ooops, proof has already been found.'
+                'message': 'Proof has already been found.'
             }
 
             return jsonify(response), 400
