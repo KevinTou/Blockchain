@@ -27,7 +27,7 @@ def proof_of_work(block):
     search_time_end = time()
 
     print(
-        f'Valid proof found. It took {search_time_end - search_time_start} seconds.')
+        f'Valid proof found.\n{proof}\n It took {search_time_end - search_time_start} seconds.')
 
     return proof
 

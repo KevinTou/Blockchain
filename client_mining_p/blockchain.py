@@ -86,10 +86,18 @@ def mine():
 
     if not all(k in data for k in required):
         response = {
-            'message': 'Missing proof or id'
+            'message': 'Missing proof or id.'
         }
 
         return jsonify(response), 400
+
+    for current in blockchain.chain:
+        if data['proof'] == current['proof']:
+            response = {
+                'message': 'Ooops, proof has already been found.'
+            }
+
+            return jsonify(response), 400
 
     proof = data['proof']
 
@@ -112,6 +120,7 @@ def full_chain():
         'length': len(blockchain.chain),
         'chain': blockchain.chain
     }
+
     return jsonify(response), 200
 
 
@@ -120,6 +129,7 @@ def get_last_block():
     response = {
         'last_block': blockchain.last_block
     }
+
     return jsonify(response), 200
 
 
