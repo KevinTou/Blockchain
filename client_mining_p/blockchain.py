@@ -116,14 +116,6 @@ def mine():
 
         return jsonify(response), 400
 
-    for current in blockchain.chain:
-        if data['proof'] == current['proof']:
-            response = {
-                'message': 'Proof has already been found.'
-            }
-
-            return jsonify(response), 400
-
     proof = data['proof']
 
     # # Forge the new Block by adding it to the chain with the proof
