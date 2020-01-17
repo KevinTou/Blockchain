@@ -6,7 +6,9 @@ import {
   FormGroup,
   Input,
   Jumbotron,
-  Label
+  Label,
+  ListGroup,
+  ListGroupItem
 } from "reactstrap";
 import axios from "axios";
 
@@ -17,12 +19,12 @@ function App() {
 
   const handleChange = event => {
     setUser({ [event.target.name]: event.target.value });
+    setTotal(0);
+    setTransactions(null);
   };
 
   const handleSubmit = event => {
     event.preventDefault();
-
-    setTransactions(null);
 
     if (!user.id) {
       return;
@@ -41,7 +43,7 @@ function App() {
           return block.transactions;
         });
 
-        let wallet = trans.map(block => {
+        let wallet = trans.flatMap(block => {
           if (block.recipient === user.id) {
             return block.amount;
           } else if (block.sender === user.id) {
@@ -66,23 +68,33 @@ function App() {
     let list = listOfTransactions.map((block, index) => {
       if (block.sender === user.id) {
         return (
-          <div key={index}>
-            <div>Sender: {block.sender}</div>
-            <div>Recipient: {block.recipient}</div>
+          <ListGroupItem key={index} color="danger">
             <div>
-              Amount: <span style={{ color: "red" }}>-{block.amount}</span>
+              <strong>Sender:</strong> {block.sender}
             </div>
-          </div>
+            <div>
+              <strong>Recipient:</strong> {block.recipient}
+            </div>
+            <div>
+              <strong>Amount:</strong>{" "}
+              <span style={{ color: "red" }}>-{block.amount}</span>
+            </div>
+          </ListGroupItem>
         );
       } else if (block.recipient === user.id) {
         return (
-          <div key={index}>
-            <div>Sender: {block.sender}</div>
-            <div>Recipient: {block.recipient}</div>
+          <ListGroupItem key={index} color="success">
             <div>
-              Amount: <span style={{ color: "green" }}>+{block.amount}</span>
+              <strong>Sender:</strong> {block.sender}
             </div>
-          </div>
+            <div>
+              <strong>Recipient:</strong> {block.recipient}
+            </div>
+            <div>
+              <strong>Amount:</strong>{" "}
+              <span style={{ color: "green" }}>+{block.amount}</span>
+            </div>
+          </ListGroupItem>
         );
       } else {
         return <></>;
@@ -106,7 +118,9 @@ function App() {
       <Form onSubmit={handleSubmit}>
         <h3>Select an ID to check:</h3>
         <FormGroup>
-          <Label for="id">ID</Label>
+          <Label for="id">
+            <strong>ID</strong>
+          </Label>
           <Input
             type="id"
             name="id"
@@ -132,7 +146,7 @@ function App() {
           {total}
         </span>
       </h4>
-      <div>{transactions && renderTransactions(transactions)}</div>
+      <ListGroup>{transactions && renderTransactions(transactions)}</ListGroup>
     </Container>
   );
 }
